@@ -19,7 +19,8 @@ public class ScheduleService : IScheduleService
     public async Task<long> CreateAsync(CreateScheduleRequest request, CancellationToken cancellationToken)
     {
         var scheduleDbo = new ScheduleDbo(
-            request.Location);
+            request.Location,
+            request.Date);
 
         return await _context.Schedules.AddAsync(scheduleDbo, cancellationToken);
     }

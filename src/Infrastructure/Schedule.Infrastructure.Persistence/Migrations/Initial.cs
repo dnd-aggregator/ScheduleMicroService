@@ -10,7 +10,8 @@ public class Initial : SqlMigration
         """
         CREATE TABLE schedules (
             id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-            location VARCHAR(255) NOT NULL
+            location VARCHAR(255) NOT NULL,
+            date DATE NOT NULL
         );
         """;
 
