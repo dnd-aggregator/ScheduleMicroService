@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Schedule.Application.Contracts;
+using Schedule.Application.Models;
 
 namespace Schedule.Presentation.Http.Controllers;
 
@@ -20,5 +21,11 @@ public class ScheduleController : ControllerBase
         CancellationToken cancellationToken)
     {
         return await _scheduleService.CreateAsync(request, cancellationToken);
+    }
+
+    [HttpGet("{id:long}")]
+    public async Task<ScheduleModel> GetSchedule([FromRoute] long id, CancellationToken cancellationToken)
+    {
+        return await _scheduleService.GetByIdAsync(id, cancellationToken);
     }
 }

@@ -1,6 +1,7 @@
 using Schedule.Application.Abstractions.Persistence;
 using Schedule.Application.Abstractions.Persistence.Dbo;
 using Schedule.Application.Contracts;
+using Schedule.Application.Models;
 
 namespace Schedule.Application;
 
@@ -20,5 +21,10 @@ public class ScheduleService : IScheduleService
             request.Location);
 
         return await _context.Schedules.AddAsync(scheduleDbo, cancellationToken);
+    }
+
+    public async Task<ScheduleModel> GetByIdAsync(long id, CancellationToken cancellationToken)
+    {
+        return await _context.Schedules.GetByIdAsync(id, cancellationToken);
     }
 }

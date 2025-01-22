@@ -40,4 +40,29 @@ public class ScheduleRepository : IScheduleRepository
         while (await reader.ReadAsync(cancellationToken)) return reader.GetInt64(0);
         throw new InvalidOperationException();
     }
+
+    public async Task<ScheduleModel> GetByIdAsync(long id, CancellationToken cancellationToken)
+    {
+        const string sql = """
+                            select *
+                            from schedules
+                            where id = @id;
+                           """;
+
+        await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
+
+        await using IPersistenceCommand command = connection.CreateCommand(sql)
+            .AddParameter("@id", id);
+
+        await using DbDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
+
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            return new ScheduleModel(
+                reader.GetInt64(0),
+                reader.GetString(1));
+        }
+
+        throw new InvalidOperationException();
+    }
 }
