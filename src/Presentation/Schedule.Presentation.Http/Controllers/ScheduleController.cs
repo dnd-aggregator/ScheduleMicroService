@@ -24,8 +24,16 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet("{id:long}")]
-    public async Task<ScheduleModel> GetSchedule([FromRoute] long id, CancellationToken cancellationToken)
+    public async Task<ScheduleModel?> GetSchedule([FromRoute] long id, CancellationToken cancellationToken)
     {
         return await _scheduleService.GetByIdAsync(id, cancellationToken);
+    }
+
+    [HttpGet]
+    public IAsyncEnumerable<ScheduleModel> GetSchedules(
+        [FromQuery] GetSchedulesRequest request,
+        CancellationToken cancellationToken)
+    {
+        return _scheduleService.GetSchedulesAsync(request, cancellationToken);
     }
 }

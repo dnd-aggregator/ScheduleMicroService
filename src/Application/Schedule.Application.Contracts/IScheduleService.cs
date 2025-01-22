@@ -6,5 +6,9 @@ public interface IScheduleService
 {
     Task<long> CreateAsync(CreateScheduleRequest request, CancellationToken cancellationToken);
 
-    Task<ScheduleModel> GetByIdAsync(long id, CancellationToken cancellationToken);
+    Task<ScheduleModel?> GetByIdAsync(long id, CancellationToken cancellationToken);
+
+    IAsyncEnumerable<ScheduleModel> GetSchedulesAsync(
+        GetSchedulesRequest request,
+        CancellationToken cancellationToken);
 }

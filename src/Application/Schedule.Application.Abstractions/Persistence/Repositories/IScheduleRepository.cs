@@ -9,6 +9,4 @@ public interface IScheduleRepository
     IAsyncEnumerable<ScheduleModel> QueryAsync(ScheduleQuery query, CancellationToken cancellationToken);
 
     Task<long> AddAsync(ScheduleDbo schedule, CancellationToken cancellationToken);
-
-    Task<ScheduleModel> GetByIdAsync(long id, CancellationToken cancellationToken);
 }

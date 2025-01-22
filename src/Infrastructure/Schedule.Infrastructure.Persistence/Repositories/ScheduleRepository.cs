@@ -5,6 +5,7 @@ using Schedule.Application.Abstractions.Persistence.Queries;
 using Schedule.Application.Abstractions.Persistence.Repositories;
 using Schedule.Application.Models;
 using System.Data.Common;
+using System.Runtime.CompilerServices;
 
 namespace Schedule.Infrastructure.Persistence.Repositories;
 
@@ -17,9 +18,36 @@ public class ScheduleRepository : IScheduleRepository
         _connectionProvider = connectionProvider;
     }
 
-    public IAsyncEnumerable<ScheduleModel> QueryAsync(ScheduleQuery query, CancellationToken cancellationToken)
+    public async IAsyncEnumerable<ScheduleModel> QueryAsync(
+        ScheduleQuery query,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        const string sql = """
+                           select *
+                           from schedules
+                           where
+                            (id > :cursor)
+                            and (cardinality(:ids) = 0 or id = any (:ids))
+                            and (:location is null or location like :location)
+                           limit :page_size;
+                           """;
+
+        await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
+
+        await using IPersistenceCommand command = connection.CreateCommand(sql)
+            .AddParameter("ids", query.ScheduleIds)
+            .AddParameter("location", query.Location)
+            .AddParameter("cursor", query.Cursor)
+            .AddParameter("page_size", query.PageSize);
+
+        await using DbDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
+
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            yield return new ScheduleModel(
+                Id: reader.GetInt64(0),
+                Location: reader.GetString(1));
+        }
     }
 
     public async Task<long> AddAsync(ScheduleDbo schedule, CancellationToken cancellationToken)
@@ -38,31 +66,6 @@ public class ScheduleRepository : IScheduleRepository
         await using DbDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
 
         while (await reader.ReadAsync(cancellationToken)) return reader.GetInt64(0);
-        throw new InvalidOperationException();
-    }
-
-    public async Task<ScheduleModel> GetByIdAsync(long id, CancellationToken cancellationToken)
-    {
-        const string sql = """
-                            select *
-                            from schedules
-                            where id = @id;
-                           """;
-
-        await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
-
-        await using IPersistenceCommand command = connection.CreateCommand(sql)
-            .AddParameter("@id", id);
-
-        await using DbDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
-
-        while (await reader.ReadAsync(cancellationToken))
-        {
-            return new ScheduleModel(
-                reader.GetInt64(0),
-                reader.GetString(1));
-        }
-
         throw new InvalidOperationException();
     }
 }

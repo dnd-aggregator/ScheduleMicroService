@@ -1,5 +1,6 @@
 using Schedule.Application.Abstractions.Persistence;
 using Schedule.Application.Abstractions.Persistence.Dbo;
+using Schedule.Application.Abstractions.Persistence.Queries;
 using Schedule.Application.Contracts;
 using Schedule.Application.Models;
 
@@ -23,8 +24,27 @@ public class ScheduleService : IScheduleService
         return await _context.Schedules.AddAsync(scheduleDbo, cancellationToken);
     }
 
-    public async Task<ScheduleModel> GetByIdAsync(long id, CancellationToken cancellationToken)
+    public async Task<ScheduleModel?> GetByIdAsync(long id, CancellationToken cancellationToken)
     {
-        return await _context.Schedules.GetByIdAsync(id, cancellationToken);
+        var query = ScheduleQuery.Build(builder => builder
+            .WithScheduleIds([id])
+            .WithPageSize(1));
+
+        return await _context.Schedules
+            .QueryAsync(query, cancellationToken)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
+
+    public IAsyncEnumerable<ScheduleModel> GetSchedulesAsync(
+        GetSchedulesRequest request,
+        CancellationToken cancellationToken)
+    {
+        var query = ScheduleQuery.Build(builder => builder
+            .WithScheduleIds(request.ScheduleIds ?? [])
+            .WithLocation(request.Location)
+            .WithPageSize(request.PageSize)
+            .WithCursor(request.Cursor));
+
+        return _context.Schedules.QueryAsync(query, cancellationToken);
     }
 }
