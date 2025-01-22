@@ -6,5 +6,6 @@ namespace Schedule.Application.Abstractions.Persistence.Queries;
 public partial record ScheduleQuery(
     long[] ScheduleIds,
     string? Location,
+    DateOnly? Date,
     [RequiredValue] int PageSize,
     long Cursor);

@@ -29,6 +29,7 @@ public class ScheduleRepository : IScheduleRepository
                             (id > :cursor)
                             and (cardinality(:ids) = 0 or id = any (:ids))
                             and (:location is null or location like :location)
+                            and (:date is null or date = :date)
                            limit :page_size;
                            """;
 
@@ -37,6 +38,7 @@ public class ScheduleRepository : IScheduleRepository
         await using IPersistenceCommand command = connection.CreateCommand(sql)
             .AddParameter("ids", query.ScheduleIds)
             .AddParameter("location", query.Location)
+            .AddParameter("date", query.Date)
             .AddParameter("cursor", query.Cursor)
             .AddParameter("page_size", query.PageSize);
 

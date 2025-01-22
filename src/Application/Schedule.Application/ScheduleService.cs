@@ -43,6 +43,7 @@ public class ScheduleService : IScheduleService
         var query = ScheduleQuery.Build(builder => builder
             .WithScheduleIds(request.ScheduleIds ?? [])
             .WithLocation(request.Location)
+            .WithDate(request.Date)
             .WithPageSize(request.PageSize)
             .WithCursor(request.Cursor));
 
