@@ -6,6 +6,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Itmo.Dev.Platform.Persistence.Abstractions" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions"/>
     </ItemGroup>
 
