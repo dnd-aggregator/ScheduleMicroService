@@ -9,7 +9,7 @@ public class Initial : SqlMigration
     protected override string GetUpSql(IServiceProvider serviceProvider) =>
         """
         CREATE TABLE schedules (
-            id SERIAL PRIMARY KEY,
+            id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
             location VARCHAR(255) NOT NULL
         );
         """;

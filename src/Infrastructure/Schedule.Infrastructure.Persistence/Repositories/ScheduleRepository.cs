@@ -4,6 +4,7 @@ using Schedule.Application.Abstractions.Persistence.Dbo;
 using Schedule.Application.Abstractions.Persistence.Queries;
 using Schedule.Application.Abstractions.Persistence.Repositories;
 using Schedule.Application.Models;
+using System.Data.Common;
 
 namespace Schedule.Infrastructure.Persistence.Repositories;
 
@@ -34,6 +35,9 @@ public class ScheduleRepository : IScheduleRepository
         await using IPersistenceCommand command = connection.CreateCommand(sql)
             .AddParameter("@location", schedule.Location);
 
-        return await command.ExecuteNonQueryAsync(cancellationToken);
+        await using DbDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
+
+        while (await reader.ReadAsync(cancellationToken)) return reader.GetInt64(0);
+        throw new InvalidOperationException();
     }
 }
