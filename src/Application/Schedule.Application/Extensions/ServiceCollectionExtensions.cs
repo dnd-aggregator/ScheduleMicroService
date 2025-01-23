@@ -8,6 +8,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddApplication(this IServiceCollection collection)
     {
         collection.AddScoped<IScheduleService, ScheduleService>();
+        collection.AddScoped<IPlayerService, PlayerService>();
         return collection;
     }
 }

@@ -1,3 +1,4 @@
+using Schedule.Application.Contracts.Requests;
 using Schedule.Application.Models;
 
 namespace Schedule.Application.Contracts;

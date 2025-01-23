@@ -2,6 +2,7 @@ using Schedule.Application.Abstractions.Persistence;
 using Schedule.Application.Abstractions.Persistence.Dbo;
 using Schedule.Application.Abstractions.Persistence.Queries;
 using Schedule.Application.Contracts;
+using Schedule.Application.Contracts.Requests;
 using Schedule.Application.Models;
 
 namespace Schedule.Application;
@@ -19,6 +20,7 @@ public class ScheduleService : IScheduleService
     public async Task<long> CreateAsync(CreateScheduleRequest request, CancellationToken cancellationToken)
     {
         var scheduleDbo = new ScheduleDbo(
+            request.MasterId,
             request.Location,
             request.Date);
 

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Schedule.Application.Contracts;
+using Schedule.Application.Contracts.Requests;
 using Schedule.Application.Models;
 
 namespace Schedule.Presentation.Http.Controllers;

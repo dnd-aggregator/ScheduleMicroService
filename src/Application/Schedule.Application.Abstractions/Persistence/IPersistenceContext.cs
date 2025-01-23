@@ -6,4 +6,6 @@ public interface IPersistenceContext
 {
     // TODO: add repository properties
     IScheduleRepository Schedules { get; }
+
+    IPlayerRepository Players { get; }
 }

@@ -10,9 +10,16 @@ public class Initial : SqlMigration
         """
         CREATE TABLE schedules (
             id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+            master_id BIGINT NOT NULL,
             location VARCHAR(255) NOT NULL,
             date DATE NOT NULL
         );
+
+        CREATE TABLE players (
+            schedule_id BIGINT NOT NULL,
+            user_id BIGINT NOT NULL,
+            character_id BIGINT NOT NULL
+        )
         """;
 
     protected override string GetDownSql(IServiceProvider serviceProvider) =>

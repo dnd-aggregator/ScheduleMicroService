@@ -1,4 +1,4 @@
-namespace Schedule.Application.Contracts;
+namespace Schedule.Application.Contracts.Requests;
 
 public record GetSchedulesRequest(
     long[]? ScheduleIds = null,

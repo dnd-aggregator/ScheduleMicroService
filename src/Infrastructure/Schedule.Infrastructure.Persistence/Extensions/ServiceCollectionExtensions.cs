@@ -20,6 +20,7 @@ public static class ServiceCollectionExtensions
 
         // TODO: add repositories
         collection.AddScoped<IScheduleRepository, ScheduleRepository>();
+        collection.AddScoped<IPlayerRepository, PlayerRepository>();
 
         collection.AddScoped<IPersistenceContext, PersistenceContext>();
 
