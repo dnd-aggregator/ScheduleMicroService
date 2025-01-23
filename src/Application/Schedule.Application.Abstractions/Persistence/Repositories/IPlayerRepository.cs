@@ -7,5 +7,7 @@ public interface IPlayerRepository
 {
     Task AddPlayer(PlayerDbo playerDbo, CancellationToken cancellationToken);
 
-    IAsyncEnumerable<PlayerModel> GetPlayersByScheduleId(long id, CancellationToken cancellationToken);
+    IAsyncEnumerable<PlayerModel> GetPlayersByScheduleId(long scheduleId, CancellationToken cancellationToken);
+
+    Task DeletePlayer(long scheduleId, long userId, CancellationToken cancellationToken);
 }

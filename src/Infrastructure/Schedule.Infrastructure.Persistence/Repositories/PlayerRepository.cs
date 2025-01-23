@@ -35,7 +35,7 @@ public class PlayerRepository : IPlayerRepository
     }
 
     public async IAsyncEnumerable<PlayerModel> GetPlayersByScheduleId(
-        long id,
+        long scheduleId,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         const string sql = """
@@ -47,7 +47,7 @@ public class PlayerRepository : IPlayerRepository
         await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
 
         await using IPersistenceCommand command = connection.CreateCommand(sql)
-            .AddParameter("scheduleId", id);
+            .AddParameter("scheduleId", scheduleId);
 
         await using DbDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
 
@@ -58,5 +58,22 @@ public class PlayerRepository : IPlayerRepository
                 UserId: reader.GetInt64(1),
                 CharacterId: reader.GetInt64(2));
         }
+    }
+
+    public async Task DeletePlayer(long scheduleId, long userId, CancellationToken cancellationToken)
+    {
+        const string sql = """
+                           DELETE
+                           FROM players
+                           WHERE schedule_id = @scheduleId AND user_id = @userId
+                           """;
+
+        await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
+
+        await using IPersistenceCommand command = connection.CreateCommand(sql)
+            .AddParameter("@scheduleId", scheduleId)
+            .AddParameter("@userId", userId);
+
+        await command.ExecuteNonQueryAsync(cancellationToken);
     }
 }

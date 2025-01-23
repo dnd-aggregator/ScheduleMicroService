@@ -23,8 +23,14 @@ public class PlayerController
     }
 
     [HttpGet]
-    public IAsyncEnumerable<PlayerModel> GetPlayersByScheduleId(long id, CancellationToken cancellationToken)
+    public IAsyncEnumerable<PlayerModel> GetPlayersByScheduleId(long scheduleId, CancellationToken cancellationToken)
     {
-        return _playerService.GetPlayersByScheduleId(id, cancellationToken);
+        return _playerService.GetPlayersByScheduleId(scheduleId, cancellationToken);
+    }
+
+    [HttpDelete]
+    public async Task DeletePlayerFromSchedule(long scheduleId, long userId, CancellationToken cancellationToken)
+    {
+        await _playerService.DeletePlayerFromSchedule(scheduleId, userId, cancellationToken);
     }
 }

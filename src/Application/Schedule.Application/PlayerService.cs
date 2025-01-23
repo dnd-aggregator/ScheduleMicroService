@@ -25,8 +25,13 @@ public class PlayerService : IPlayerService
         await _context.Players.AddPlayer(dbo, cancellationToken);
     }
 
-    public IAsyncEnumerable<PlayerModel> GetPlayersByScheduleId(long id, CancellationToken cancellationToken)
+    public IAsyncEnumerable<PlayerModel> GetPlayersByScheduleId(long scheduleId, CancellationToken cancellationToken)
     {
-        return _context.Players.GetPlayersByScheduleId(id, cancellationToken);
+        return _context.Players.GetPlayersByScheduleId(scheduleId, cancellationToken);
+    }
+
+    public async Task DeletePlayerFromSchedule(long scheduleId, long userId, CancellationToken cancellationToken)
+    {
+        await _context.Players.DeletePlayer(scheduleId, userId, cancellationToken);
     }
 }
