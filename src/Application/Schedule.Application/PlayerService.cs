@@ -30,6 +30,16 @@ public class PlayerService : IPlayerService
         return _context.Players.GetPlayersByScheduleId(scheduleId, cancellationToken);
     }
 
+    public async Task PatchCharacter(PatchCharacterRequest patchCharacterRequest, CancellationToken cancellationToken)
+    {
+        var dboPatch = new PatchPlayerDbo(
+            patchCharacterRequest.ScheduleId,
+            patchCharacterRequest.UserId,
+            patchCharacterRequest.CharacterId);
+
+        await _context.Players.PatchPlayer(dboPatch, cancellationToken);
+    }
+
     public async Task DeletePlayerFromSchedule(long scheduleId, long userId, CancellationToken cancellationToken)
     {
         await _context.Players.DeletePlayer(scheduleId, userId, cancellationToken);

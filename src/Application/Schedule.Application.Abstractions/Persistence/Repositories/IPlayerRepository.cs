@@ -9,5 +9,7 @@ public interface IPlayerRepository
 
     IAsyncEnumerable<PlayerModel> GetPlayersByScheduleId(long scheduleId, CancellationToken cancellationToken);
 
+    Task PatchPlayer(PatchPlayerDbo playerDbo, CancellationToken cancellationToken);
+
     Task DeletePlayer(long scheduleId, long userId, CancellationToken cancellationToken);
 }

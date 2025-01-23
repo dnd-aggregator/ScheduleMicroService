@@ -60,6 +60,24 @@ public class PlayerRepository : IPlayerRepository
         }
     }
 
+    public async Task PatchPlayer(PatchPlayerDbo playerDbo, CancellationToken cancellationToken)
+    {
+        const string sql = """
+                           update players 
+                           set character_id = @characterId
+                           where schedule_id = @scheduleId and user_id = @userId
+                           """;
+
+        await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
+
+        await using IPersistenceCommand command = connection.CreateCommand(sql)
+            .AddParameter("@scheduleId", playerDbo.ScheduleId)
+            .AddParameter("@userId", playerDbo.UserId)
+            .AddParameter("@characterId", playerDbo.CharacterId);
+
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
     public async Task DeletePlayer(long scheduleId, long userId, CancellationToken cancellationToken)
     {
         const string sql = """

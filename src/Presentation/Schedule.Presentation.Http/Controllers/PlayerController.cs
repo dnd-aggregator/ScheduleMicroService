@@ -28,6 +28,12 @@ public class PlayerController
         return _playerService.GetPlayersByScheduleId(scheduleId, cancellationToken);
     }
 
+    [HttpPatch]
+    public async Task PatchCharacter(PatchCharacterRequest request, CancellationToken cancellationToken)
+    {
+        await _playerService.PatchCharacter(request, cancellationToken);
+    }
+
     [HttpDelete]
     public async Task DeletePlayerFromSchedule(long scheduleId, long userId, CancellationToken cancellationToken)
     {
