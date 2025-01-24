@@ -22,7 +22,8 @@ public class ScheduleService : IScheduleService
         var scheduleDbo = new ScheduleDbo(
             request.MasterId,
             request.Location,
-            request.Date);
+            request.Date,
+            ScheduleStatus.Draft);
 
         return await _context.Schedules.AddAsync(scheduleDbo, cancellationToken);
     }

@@ -50,15 +50,16 @@ public class ScheduleRepository : IScheduleRepository
                 Id: reader.GetInt64(0),
                 MasterId: reader.GetInt64(1),
                 Location: reader.GetString(2),
-                Date: reader.GetFieldValue<DateOnly>(3));
+                Date: reader.GetFieldValue<DateOnly>(3),
+                Status: reader.GetFieldValue<ScheduleStatus>(4));
         }
     }
 
     public async Task<long> AddAsync(ScheduleDbo schedule, CancellationToken cancellationToken)
     {
         const string sql = """
-                           insert into schedules (master_id, location, date) 
-                           values (@master_id, @location, @date)
+                           insert into schedules (master_id, location, date, status) 
+                           values (@master_id, @location, @date, @status)
                            returning id;
                            """;
 
@@ -67,7 +68,8 @@ public class ScheduleRepository : IScheduleRepository
         await using IPersistenceCommand command = connection.CreateCommand(sql)
             .AddParameter("@location", schedule.Location)
             .AddParameter("@date", schedule.Date)
-            .AddParameter("@master_id", schedule.MasterId);
+            .AddParameter("@master_id", schedule.MasterId)
+            .AddParameter("@status", schedule.Status);
 
         await using DbDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
 

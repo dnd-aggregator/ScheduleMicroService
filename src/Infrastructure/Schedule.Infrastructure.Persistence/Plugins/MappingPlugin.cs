@@ -1,5 +1,6 @@
 using Itmo.Dev.Platform.Persistence.Postgres.Plugins;
 using Npgsql;
+using Schedule.Application.Models;
 
 namespace Schedule.Infrastructure.Persistence.Plugins;
 
@@ -9,5 +10,8 @@ namespace Schedule.Infrastructure.Persistence.Plugins;
 /// </summary>
 public class MappingPlugin : IPostgresDataSourcePlugin
 {
-    public void Configure(NpgsqlDataSourceBuilder dataSource) { }
+    public void Configure(NpgsqlDataSourceBuilder dataSource)
+    {
+        dataSource.MapEnum<ScheduleStatus>("schedule_status");
+    }
 }

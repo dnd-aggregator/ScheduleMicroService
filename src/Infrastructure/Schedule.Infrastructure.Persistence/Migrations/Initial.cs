@@ -8,11 +8,20 @@ public class Initial : SqlMigration
 {
     protected override string GetUpSql(IServiceProvider serviceProvider) =>
         """
+        create type schedule_status as enum
+        (
+            'draft',
+            'planned',
+            'started',
+            'finished'
+        );
+
         CREATE TABLE schedules (
             id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
             master_id BIGINT NOT NULL,
             location VARCHAR(255) NOT NULL,
-            date DATE NOT NULL
+            date DATE NOT NULL,
+            status schedule_status NOT NULL
         );
 
         CREATE TABLE players (
@@ -25,5 +34,7 @@ public class Initial : SqlMigration
     protected override string GetDownSql(IServiceProvider serviceProvider) =>
         """
         drop table schedules;
+        drop table players;
+        drop type schedule_status;
         """;
 }

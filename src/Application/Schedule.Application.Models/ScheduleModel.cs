@@ -4,4 +4,5 @@ public record ScheduleModel(
     long Id,
     long MasterId,
     string Location,
-    DateOnly Date);
+    DateOnly Date,
+    ScheduleStatus Status);
