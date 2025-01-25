@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package schedules;
+
+option csharp_namespace = "Schedules.Contracts";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+
+service ScheduleService {
+  rpc CreateSchedule(CreateScheduleGrpcRequest) returns (CreateScheduleGrpcResponse);
+  rpc GetSchedule(GetScheduleGrpcRequest) returns (GetScheduleGrpcResponse);
+  rpc GetSchedules(GetSchedulesGrpcRequest) returns (GetSchedulesGrpcResponse);
+}
+
+message CreateScheduleGrpcRequest {
+  string location = 1;
+  google.protobuf.Timestamp date = 2;
+}
+
+message CreateScheduleGrpcResponse {
+  int64 id = 1;
+}
+
+message GetScheduleGrpcRequest {
+  int64 id = 1;
+}
+
+message GetScheduleGrpcResponse {
+  ScheduleGrpc response = 1;
+}
+
+message GetSchedulesGrpcRequest {
+  repeated int64 ids = 1;
+  string location = 2;
+  google.protobuf.Timestamp date = 3;
+  int64 cursor = 4;
+  int32 pageSize = 5;
+}
+
+message GetSchedulesGrpcResponse {
+  repeated ScheduleGrpc response = 1;
+}
+
+message ScheduleGrpc {
+  int64 id = 1;
+  string location = 2;
+  google.protobuf.Timestamp date = 3;
+}

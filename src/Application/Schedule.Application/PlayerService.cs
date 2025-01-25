@@ -8,21 +8,34 @@ namespace Schedule.Application;
 
 public class PlayerService : IPlayerService
 {
+    private readonly IUsersClient _usersClient;
     private readonly IPersistenceContext _context;
 
-    public PlayerService(IPersistenceContext context)
+    public PlayerService(IUsersClient usersClient, IPersistenceContext context)
     {
+        _usersClient = usersClient;
         _context = context;
     }
 
-    public async Task AddPlayer(AddPlayerRequest addPlayerRequest, CancellationToken cancellationToken)
+    public async Task<AddPlayerResponse> AddPlayer(AddPlayerRequest addPlayerRequest, CancellationToken cancellationToken)
     {
+        var playerModel = new PlayerModel(
+            addPlayerRequest.ScheduleId,
+            addPlayerRequest.UserId,
+            addPlayerRequest.CharacterId);
+
+        CharacterValidationResponse validationResult = await _usersClient.ValidateUsers(playerModel);
+
+        if (validationResult is not CharacterValidationResponse.SuccessValidationResult) return new AddPlayerResponse.AddPlayerFailure();
+
         var dbo = new PlayerDbo(
             addPlayerRequest.ScheduleId,
             addPlayerRequest.UserId,
             addPlayerRequest.CharacterId);
 
         await _context.Players.AddPlayer(dbo, cancellationToken);
+
+        return new AddPlayerResponse.AddPlayerSuccess();
     }
 
     public IAsyncEnumerable<PlayerModel> GetPlayersByScheduleId(long scheduleId, CancellationToken cancellationToken)

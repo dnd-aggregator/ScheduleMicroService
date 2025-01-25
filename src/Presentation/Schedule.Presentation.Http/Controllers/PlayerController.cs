@@ -17,9 +17,9 @@ public class PlayerController
     }
 
     [HttpPost]
-    public async Task AddPlayer(AddPlayerRequest addPayerRequest, CancellationToken cancellationToken)
+    public async Task<AddPlayerResponse> AddPlayer(AddPlayerRequest addPayerRequest, CancellationToken cancellationToken)
     {
-        await _playerService.AddPlayer(addPayerRequest, cancellationToken);
+        return await _playerService.AddPlayer(addPayerRequest, cancellationToken);
     }
 
     [HttpGet]

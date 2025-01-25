@@ -5,7 +5,7 @@ namespace Schedule.Application.Contracts;
 
 public interface IPlayerService
 {
-    Task AddPlayer(AddPlayerRequest addPlayerRequest, CancellationToken cancellationToken);
+    Task<AddPlayerResponse> AddPlayer(AddPlayerRequest addPlayerRequest, CancellationToken cancellationToken);
 
     IAsyncEnumerable<PlayerModel> GetPlayersByScheduleId(long scheduleId, CancellationToken cancellationToken);
 
