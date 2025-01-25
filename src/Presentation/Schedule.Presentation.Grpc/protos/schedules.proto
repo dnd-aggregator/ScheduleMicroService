@@ -14,8 +14,9 @@ service ScheduleService {
 }
 
 message CreateScheduleGrpcRequest {
-  string location = 1;
-  google.protobuf.Timestamp date = 2;
+  int64 master_id = 1;
+  string location = 2;
+  google.protobuf.Timestamp date = 3;
 }
 
 message CreateScheduleGrpcResponse {

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Schedule.Presentation.Grpc.Controllers;
 
 namespace Schedule.Presentation.Grpc.Extensions;
 
@@ -9,7 +10,7 @@ public static class ApplicationBuilderExtensions
         builder.UseEndpoints(routeBuilder =>
         {
             // TODO: add gRPC services implementation
-            // routeBuilder.MapGrpcService<Sample>();
+            routeBuilder.MapGrpcService<ScheduleController>();
             routeBuilder.MapGrpcReflectionService();
         });
 
