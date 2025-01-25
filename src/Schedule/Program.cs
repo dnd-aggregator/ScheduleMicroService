@@ -26,7 +26,7 @@ builder.Services.AddPresentationGrpc();
 
 builder.Services.AddGrpcClient<UserGrpcService.UserGrpcServiceClient>((_, o) =>
 {
-    o.Address = new Uri("https://localhost:8070");
+    o.Address = new Uri("http://localhost:5000");
 });
 
 // builder.Services.AddPresentationKafka(builder.Configuration);

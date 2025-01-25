@@ -17,9 +17,11 @@ public class PlayerController
     }
 
     [HttpPost]
-    public async Task<AddPlayerResponse> AddPlayer(AddPlayerRequest addPayerRequest, CancellationToken cancellationToken)
+    [ProducesResponseType(typeof(AddPlayerResponse), 200)]
+    public async Task<IActionResult> AddPlayer(AddPlayerRequest addPayerRequest, CancellationToken cancellationToken)
     {
-        return await _playerService.AddPlayer(addPayerRequest, cancellationToken);
+        AddPlayerResponse result = await _playerService.AddPlayer(addPayerRequest, cancellationToken);
+        return new OkObjectResult(result);
     }
 
     [HttpGet]
