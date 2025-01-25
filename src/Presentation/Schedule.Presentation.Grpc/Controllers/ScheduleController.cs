@@ -48,6 +48,7 @@ public class ScheduleController : ScheduleService.ScheduleServiceBase
             Response = new ScheduleGrpc()
             {
                 Id = schedule.Id,
+                MasterId = schedule.MasterId,
                 Location = schedule.Location,
                 Date = Timestamp.FromDateTime(schedule.Date.ToDateTime(TimeOnly.MinValue)),
             },
@@ -86,6 +87,7 @@ public class ScheduleController : ScheduleService.ScheduleServiceBase
             grpcSchedules.Add(new ScheduleGrpc
             {
                 Id = schedule.Id,
+                MasterId = schedule.MasterId,
                 Location = schedule.Location,
                 Date = Timestamp.FromDateTime(schedule.Date.ToDateTime(TimeOnly.MinValue)),
             });

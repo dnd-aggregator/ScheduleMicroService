@@ -45,6 +45,7 @@ message GetSchedulesGrpcResponse {
 
 message ScheduleGrpc {
   int64 id = 1;
-  string location = 2;
-  google.protobuf.Timestamp date = 3;
+  int64 master_id = 2;
+  string location = 3;
+  google.protobuf.Timestamp date = 4;
 }
