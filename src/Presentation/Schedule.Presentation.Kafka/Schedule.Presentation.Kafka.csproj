@@ -10,10 +10,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="protos\"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\..\Application\Schedule.Application.Contracts\Schedule.Application.Contracts.csproj"/>
     </ItemGroup>
 

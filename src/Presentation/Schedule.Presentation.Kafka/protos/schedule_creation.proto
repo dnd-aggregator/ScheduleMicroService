@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package schedule;
+
+option csharp_namespace = "Schedule.Kafka.Contracts";
+
+import "google/protobuf/timestamp.proto";
+
+message ScheduleCreationKey {
+  int64 schedule_id = 1;
+}
+
+message ScheduleCreationValue {
+
+  oneof event {
+    ScheduleCreated schedule_created = 1;
+    SchedulePlanned schedule_planned = 2;
+  }
+
+  message ScheduleCreated {
+    int64 schedule_id = 1;
+  }
+
+  message SchedulePlanned {
+    int64 schedule_id = 1;
+  }
+}
