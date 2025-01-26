@@ -51,6 +51,7 @@ public class ScheduleController : ScheduleService.ScheduleServiceBase
                 MasterId = schedule.MasterId,
                 Location = schedule.Location,
                 Date = Timestamp.FromDateTime(schedule.Date.ToDateTime(TimeOnly.MinValue).ToUniversalTime()),
+                ScheduleStatus = MapStatusToGrpc(schedule.Status),
             },
         };
     }
@@ -90,9 +91,23 @@ public class ScheduleController : ScheduleService.ScheduleServiceBase
                 MasterId = schedule.MasterId,
                 Location = schedule.Location,
                 Date = Timestamp.FromDateTime(schedule.Date.ToDateTime(TimeOnly.MinValue).ToUniversalTime()),
+                ScheduleStatus = MapStatusToGrpc(schedule.Status),
             });
         }
 
         return grpcSchedules;
+    }
+
+    private static ScheduleStatusGrpc MapStatusToGrpc(ScheduleStatus status)
+    {
+        return status switch
+        {
+            ScheduleStatus.Unknown => ScheduleStatusGrpc.ScheduleStatusUnspecified,
+            ScheduleStatus.Draft => ScheduleStatusGrpc.ScheduleStatusDraft,
+            ScheduleStatus.Planned => ScheduleStatusGrpc.ScheduleStatusPlanned,
+            ScheduleStatus.Started => ScheduleStatusGrpc.ScheduleStatusStarted,
+            ScheduleStatus.Finished => ScheduleStatusGrpc.ScheduleStatusFinished,
+            _ => ScheduleStatusGrpc.ScheduleStatusUnspecified,
+        };
     }
 }

@@ -48,4 +48,13 @@ message ScheduleGrpc {
   int64 master_id = 2;
   string location = 3;
   google.protobuf.Timestamp date = 4;
+  ScheduleStatusGrpc schedule_status = 5;
+}
+
+enum ScheduleStatusGrpc {
+  SCHEDULE_STATUS_UNSPECIFIED = 0;
+  SCHEDULE_STATUS_DRAFT = 1;
+  SCHEDULE_STATUS_PLANNED = 2;
+  SCHEDULE_STATUS_STARTED = 3;
+  SCHEDULE_STATUS_FINISHED = 4;
 }
