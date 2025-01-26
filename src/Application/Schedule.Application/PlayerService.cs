@@ -17,7 +17,9 @@ public class PlayerService : IPlayerService
         _context = context;
     }
 
-    public async Task<AddPlayerResponse> AddPlayer(AddPlayerRequest addPlayerRequest, CancellationToken cancellationToken)
+    public async Task<AddPlayerResponse> AddPlayer(
+        AddPlayerRequest addPlayerRequest,
+        CancellationToken cancellationToken)
     {
         var playerModel = new PlayerModel(
             addPlayerRequest.ScheduleId,
@@ -26,7 +28,10 @@ public class PlayerService : IPlayerService
 
         CharacterValidationResponse validationResult = await _usersClient.ValidateUsers(playerModel);
 
-        if (validationResult is not CharacterValidationResponse.SuccessValidationResult) return new AddPlayerResponse.AddPlayerFailure();
+        if (validationResult is CharacterValidationResponse.UserNotFoundValidationResult)
+            return new AddPlayerResponse.AddPlayerUserNotFoundResponse();
+        if (validationResult is CharacterValidationResponse.CharacterNotFoundValidationResult)
+            return new AddPlayerResponse.AddPlayerCharacterNotFoundResponse();
 
         var dbo = new PlayerDbo(
             addPlayerRequest.ScheduleId,
@@ -35,7 +40,7 @@ public class PlayerService : IPlayerService
 
         await _context.Players.AddPlayer(dbo, cancellationToken);
 
-        return new AddPlayerResponse.AddPlayerSuccess();
+        return new AddPlayerResponse.AddPlayerSuccessResponse();
     }
 
     public IAsyncEnumerable<PlayerModel> GetPlayersByScheduleId(long scheduleId, CancellationToken cancellationToken)

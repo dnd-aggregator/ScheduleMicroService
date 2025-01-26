@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package schedules;
+
+option csharp_namespace = "Schedules.Contracts";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+
+service PlayersGrpcService {
+  rpc AddPlayer(AddPlayerGrpcRequest) returns (AddPlayerGrpcResponse);
+  rpc GetPlayersByScheduleId(GetPlayersGrpcRequest) returns (GetPlayersGrpcResponse);
+  rpc PatchCharacter(PatchCharacterGrpcRequest) returns (PatchCharacterGrpcResponse);
+  rpc DeletePlayerFromSchedule(DeletePlayerGrpcRequest) returns (DeletePlayerGrpcResponse);
+}
+
+message PlayerGrpc {
+  int64 ScheduleId = 1;
+  int64 UserId = 2;
+  int64 CharacterId = 3;
+}
+
+message SuccessResult {}
+
+message UserNotFoundResult {}
+
+message CharacterNotFoundResult {}
+
+message ScheduleNotFound {}
+
+message AddPlayerGrpcRequest {
+  PlayerGrpc player = 1;
+}
+
+message AddPlayerGrpcResponse {
+  oneof result {
+    SuccessResult success = 1;
+    ScheduleNotFound schedule_not_found = 2;
+    UserNotFoundResult user_not_found = 3;
+    CharacterNotFoundResult character_not_found = 4;
+  }
+}
+
+message GetPlayersGrpcRequest {
+  int64 ScheduleId = 1;
+}
+
+message GetPlayersGrpcResponse {
+  repeated PlayerGrpc players = 1;
+}
+
+message PatchCharacterGrpcRequest {
+  int64 ScheduleId = 1;
+  int64 UserId = 2;
+  int64 CharacterId = 3;
+}
+
+message PatchCharacterGrpcResponse {
+  oneof result {
+    SuccessResult success = 1;
+    ScheduleNotFound schedule_not_found = 2;
+    UserNotFoundResult user_not_found = 3;
+    CharacterNotFoundResult character_not_found = 4;
+  }
+}
+
+message DeletePlayerGrpcRequest {
+  int64 ScheduleId = 1;
+  int64 PayerId = 2;
+}
+
+message DeletePlayerGrpcResponse {
+  SuccessResult success = 1;
+  ScheduleNotFound schedule_not_found = 2;
+  UserNotFoundResult user_not_found = 3;
+}

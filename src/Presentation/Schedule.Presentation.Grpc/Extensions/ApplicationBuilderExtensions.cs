@@ -11,6 +11,7 @@ public static class ApplicationBuilderExtensions
         {
             // TODO: add gRPC services implementation
             routeBuilder.MapGrpcService<ScheduleController>();
+            routeBuilder.MapGrpcService<PlayersController>();
             routeBuilder.MapGrpcReflectionService();
         });
 
