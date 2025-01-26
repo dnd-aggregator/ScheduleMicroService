@@ -89,7 +89,7 @@ public class ScheduleController : ScheduleService.ScheduleServiceBase
                 Id = schedule.Id,
                 MasterId = schedule.MasterId,
                 Location = schedule.Location,
-                Date = Timestamp.FromDateTime(schedule.Date.ToDateTime(TimeOnly.MinValue)),
+                Date = Timestamp.FromDateTime(schedule.Date.ToDateTime(TimeOnly.MinValue).ToUniversalTime()),
             });
         }
 
