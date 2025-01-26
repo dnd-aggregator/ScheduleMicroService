@@ -54,18 +54,33 @@ public class PlayersController : PlayersGrpcService.PlayersGrpcServiceBase
         };
     }
 
-    public override Task<PatchCharacterGrpcResponse> PatchCharacter(
+    public override async Task<PatchCharacterGrpcResponse> PatchCharacter(
         PatchCharacterGrpcRequest request,
         ServerCallContext context)
     {
-        return base.PatchCharacter(request, context);
+        var applicationRequest = new PatchCharacterRequest(
+            request.ScheduleId,
+            request.UserId,
+            request.CharacterId);
+
+        await _playerService.PatchCharacter(applicationRequest, context.CancellationToken);
+
+        return new PatchCharacterGrpcResponse()
+        {
+            Success = new SuccessResult(),
+        };
     }
 
-    public override Task<DeletePlayerGrpcResponse> DeletePlayerFromSchedule(
+    public override async Task<DeletePlayerGrpcResponse> DeletePlayerFromSchedule(
         DeletePlayerGrpcRequest request,
         ServerCallContext context)
     {
-        return base.DeletePlayerFromSchedule(request, context);
+        await _playerService.DeletePlayerFromSchedule(request.ScheduleId, request.PayerId, context.CancellationToken);
+
+        return new DeletePlayerGrpcResponse()
+        {
+            Success = new SuccessResult(),
+        };
     }
 
     private static RepeatedField<PlayerGrpc> ToGrpcResponse(List<PlayerModel> players)
