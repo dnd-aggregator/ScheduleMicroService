@@ -48,14 +48,27 @@ public class PlayerService : IPlayerService
         return _context.Players.GetPlayersByScheduleId(scheduleId, cancellationToken);
     }
 
-    public async Task PatchCharacter(PatchCharacterRequest patchCharacterRequest, CancellationToken cancellationToken)
+    public async Task<PatchCharacterResponse> PatchCharacter(PatchCharacterRequest patchCharacterRequest, CancellationToken cancellationToken)
     {
+        var playerModel = new PlayerModel(
+            patchCharacterRequest.ScheduleId,
+            patchCharacterRequest.UserId,
+            patchCharacterRequest.CharacterId);
+
+        CharacterValidationResponse validationResult = await _usersClient.ValidateUsers(playerModel);
+
+        if (validationResult is CharacterValidationResponse.UserNotFoundValidationResult)
+            return new PatchCharacterResponse.PatchCharacterUserNotFoundResponse();
+        if (validationResult is CharacterValidationResponse.CharacterNotFoundValidationResult)
+            return new PatchCharacterResponse.PatchCharacterCharacterNotFoundResponse();
         var dboPatch = new PatchPlayerDbo(
             patchCharacterRequest.ScheduleId,
             patchCharacterRequest.UserId,
             patchCharacterRequest.CharacterId);
 
         await _context.Players.PatchPlayer(dboPatch, cancellationToken);
+
+        return new PatchCharacterResponse.PatchCharacterSuccessResponse();
     }
 
     public async Task DeletePlayerFromSchedule(long scheduleId, long userId, CancellationToken cancellationToken)

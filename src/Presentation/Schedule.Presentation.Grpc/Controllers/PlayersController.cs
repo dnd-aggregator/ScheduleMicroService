@@ -63,11 +63,16 @@ public class PlayersController : PlayersGrpcService.PlayersGrpcServiceBase
             request.UserId,
             request.CharacterId);
 
-        await _playerService.PatchCharacter(applicationRequest, context.CancellationToken);
+        PatchCharacterResponse patchResponse =
+            await _playerService.PatchCharacter(applicationRequest, context.CancellationToken);
 
-        return new PatchCharacterGrpcResponse()
+        return patchResponse switch
         {
-            Success = new SuccessResult(),
+            PatchCharacterResponse.PatchCharacterSuccessResponse => new PatchCharacterGrpcResponse() { Success = new SuccessResult() },
+            PatchCharacterResponse.PatchCharacterScheduleNotFoundResponse => new PatchCharacterGrpcResponse() { ScheduleNotFound = new ScheduleNotFound() },
+            PatchCharacterResponse.PatchCharacterUserNotFoundResponse => new PatchCharacterGrpcResponse() { UserNotFound = new UserNotFoundResult() },
+            PatchCharacterResponse.PatchCharacterCharacterNotFoundResponse => new PatchCharacterGrpcResponse() { CharacterNotFound = new CharacterNotFoundResult() },
+            _ => throw new UnreachableException(),
         };
     }
 

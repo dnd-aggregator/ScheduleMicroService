@@ -9,7 +9,7 @@ public interface IPlayerService
 
     IAsyncEnumerable<PlayerModel> GetPlayersByScheduleId(long scheduleId, CancellationToken cancellationToken);
 
-    Task PatchCharacter(PatchCharacterRequest patchCharacterRequest, CancellationToken cancellationToken);
+    Task<PatchCharacterResponse> PatchCharacter(PatchCharacterRequest patchCharacterRequest, CancellationToken cancellationToken);
 
     Task DeletePlayerFromSchedule(long scheduleId, long userId, CancellationToken cancellationToken);
 }
