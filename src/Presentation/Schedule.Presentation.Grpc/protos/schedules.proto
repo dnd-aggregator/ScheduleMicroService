@@ -11,6 +11,7 @@ service ScheduleService {
   rpc CreateSchedule(CreateScheduleGrpcRequest) returns (CreateScheduleGrpcResponse);
   rpc GetSchedule(GetScheduleGrpcRequest) returns (GetScheduleGrpcResponse);
   rpc GetSchedules(GetSchedulesGrpcRequest) returns (GetSchedulesGrpcResponse);
+  rpc PatchScheduleStatus(PatchStatusRequest) returns (PatchStatusResponse);
 }
 
 message CreateScheduleGrpcRequest {
@@ -58,3 +59,10 @@ enum ScheduleStatusGrpc {
   SCHEDULE_STATUS_STARTED = 3;
   SCHEDULE_STATUS_FINISHED = 4;
 }
+
+message PatchStatusRequest {
+  int64 id = 1;
+  ScheduleStatusGrpc status = 2;
+}
+
+message PatchStatusResponse {}

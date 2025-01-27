@@ -12,4 +12,6 @@ public interface IScheduleService
     IAsyncEnumerable<ScheduleModel> GetSchedulesAsync(
         GetSchedulesRequest request,
         CancellationToken cancellationToken);
+
+    Task PatchStatusAsync(long id, ScheduleStatus status, CancellationToken cancellationToken);
 }

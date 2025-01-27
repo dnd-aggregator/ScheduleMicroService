@@ -52,4 +52,9 @@ public class ScheduleService : IScheduleService
 
         return _context.Schedules.QueryAsync(query, cancellationToken);
     }
+
+    public async Task PatchStatusAsync(long id, ScheduleStatus status, CancellationToken cancellationToken)
+    {
+        await _context.Schedules.PatchStatusAsync(id, status, cancellationToken);
+    }
 }

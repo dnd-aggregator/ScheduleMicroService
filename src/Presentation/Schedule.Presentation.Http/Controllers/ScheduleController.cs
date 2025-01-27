@@ -37,4 +37,10 @@ public class ScheduleController : ControllerBase
     {
         return _scheduleService.GetSchedulesAsync(request, cancellationToken);
     }
+
+    [HttpPatch("{scheduleId:long}")]
+    public async Task PatchStatus(long scheduleId, ScheduleStatus status, CancellationToken cancellationToken)
+    {
+        await _scheduleService.PatchStatusAsync(scheduleId, status, cancellationToken);
+    }
 }

@@ -76,4 +76,21 @@ public class ScheduleRepository : IScheduleRepository
         while (await reader.ReadAsync(cancellationToken)) return reader.GetInt64(0);
         throw new InvalidOperationException();
     }
+
+    public async Task PatchStatusAsync(long id, ScheduleStatus status, CancellationToken cancellationToken)
+    {
+        const string sql = """
+                            update schedules 
+                            set status = @status
+                            where id = @id;
+                           """;
+
+        await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
+
+        await using IPersistenceCommand command = connection.CreateCommand(sql)
+            .AddParameter("@id", id)
+            .AddParameter("@status", status);
+
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
 }

@@ -79,6 +79,15 @@ public class ScheduleController : ScheduleService.ScheduleServiceBase
         };
     }
 
+    public override async Task<PatchStatusResponse> PatchScheduleStatus(
+        PatchStatusRequest request,
+        ServerCallContext context)
+    {
+        await _scheduleService.PatchStatusAsync(request.Id, MapStatusToGrpc(request.Status), context.CancellationToken);
+
+        return new PatchStatusResponse();
+    }
+
     private static RepeatedField<ScheduleGrpc> ToGrpcResponse(List<ScheduleModel> schedules)
     {
         var grpcSchedules = new RepeatedField<ScheduleGrpc>();
@@ -108,6 +117,19 @@ public class ScheduleController : ScheduleService.ScheduleServiceBase
             ScheduleStatus.Started => ScheduleStatusGrpc.ScheduleStatusStarted,
             ScheduleStatus.Finished => ScheduleStatusGrpc.ScheduleStatusFinished,
             _ => ScheduleStatusGrpc.ScheduleStatusUnspecified,
+        };
+    }
+
+    private static ScheduleStatus MapStatusToGrpc(ScheduleStatusGrpc status)
+    {
+        return status switch
+        {
+            ScheduleStatusGrpc.ScheduleStatusUnspecified => ScheduleStatus.Unknown,
+            ScheduleStatusGrpc.ScheduleStatusDraft => ScheduleStatus.Draft,
+            ScheduleStatusGrpc.ScheduleStatusPlanned => ScheduleStatus.Planned,
+            ScheduleStatusGrpc.ScheduleStatusStarted => ScheduleStatus.Started,
+            ScheduleStatusGrpc.ScheduleStatusFinished => ScheduleStatus.Finished,
+            _ => ScheduleStatus.Unknown,
         };
     }
 }
