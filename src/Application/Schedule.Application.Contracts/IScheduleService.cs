@@ -13,5 +13,5 @@ public interface IScheduleService
         GetSchedulesRequest request,
         CancellationToken cancellationToken);
 
-    Task PatchStatusAsync(long id, ScheduleStatus status, CancellationToken cancellationToken);
+    Task<PatchScheduleStatusResponse> PatchStatusAsync(long id, ScheduleStatus status, CancellationToken cancellationToken);
 }

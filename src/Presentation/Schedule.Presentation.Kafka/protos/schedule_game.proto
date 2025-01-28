@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package dnd;
+
+message GameScheduleKey {
+  int64 game_id = 1;
+}
+
+message GameScheduleValue {
+  int64 game_id = 1;
+  repeated int64 character_ids=2;
+}

@@ -2,6 +2,7 @@
 
 using Character.Validation;
 using Itmo.Dev.Platform.Common.Extensions;
+using Itmo.Dev.Platform.Events;
 using Itmo.Dev.Platform.Observability;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -9,6 +10,7 @@ using Schedule.Application.Extensions;
 using Schedule.Infrastructure.Persistence.Extensions;
 using Schedule.Presentation.Grpc.Extensions;
 using Schedule.Presentation.Http.Extensions;
+using Schedule.Presentation.Kafka.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +31,7 @@ builder.Services.AddGrpcClient<UserGrpcService.UserGrpcServiceClient>((_, o) =>
     o.Address = new Uri("http://localhost:5000");
 });
 
-// builder.Services.AddPresentationKafka(builder.Configuration);
+builder.Services.AddPresentationKafka(builder.Configuration);
 builder.Services
     .AddControllers()
     .AddNewtonsoftJson()
@@ -37,7 +39,7 @@ builder.Services
 
 builder.Services.AddSwaggerGen().AddEndpointsApiExplorer();
 
-// builder.Services.AddPlatformEvents(b => b.AddPresentationKafkaHandlers());
+builder.Services.AddPlatformEvents(b => b.AddPresentationKafkaHandlers());
 builder.Services.AddUtcDateTimeProvider();
 
 WebApplication app = builder.Build();

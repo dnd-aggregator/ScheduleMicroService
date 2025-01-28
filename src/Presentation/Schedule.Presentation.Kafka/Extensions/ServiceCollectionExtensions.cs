@@ -1,3 +1,4 @@
+using Dnd;
 using Itmo.Dev.Platform.Kafka.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +12,7 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration)
     {
         // const string consumerKey = "Presentation:Kafka:Consumers";
-        // const string producerKey = "Presentation:Kafka:Producers";
+        const string producerKey = "Presentation:Kafka:Producers";
 
         // TODO: add consumers and producers
         // consumer example:
@@ -24,14 +25,14 @@ public static class ServiceCollectionExtensions
         //     .HandleWith<MessageHandler>())
         //
         // producer example:
-        // .AddProducer(b => b
-        //     .WithKey<MessageKey>()
-        //     .WithValue<MessageValue>()
-        //     .WithConfiguration(configuration.GetSection($"{producerKey}:MessageName"))
-        //     .SerializeKeyWithProto()
-        //     .SerializeValueWithProto())
         collection.AddPlatformKafka(builder => builder
-            .ConfigureOptions(configuration.GetSection("Presentation:Kafka")));
+            .ConfigureOptions(configuration.GetSection("Presentation:Kafka"))
+            .AddProducer(b => b
+                .WithKey<GameScheduleKey>()
+                .WithValue<GameScheduleValue>()
+                .WithConfiguration(configuration.GetSection($"{producerKey}:ScheduleGame"))
+                .SerializeKeyWithProto()
+                .SerializeValueWithProto()));
 
         return collection;
     }
