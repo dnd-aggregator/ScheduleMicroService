@@ -11,7 +11,7 @@ namespace Schedule.Application;
 
 public class ScheduleService : IScheduleService
 {
-    private const int PlayerCount = 5;
+    private const int PlayerCount = 1;
     private readonly IPersistenceContext _context;
     private readonly IEventPublisher _eventPublisher;
     private readonly IPlayerService _playerService;
