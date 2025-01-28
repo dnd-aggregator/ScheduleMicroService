@@ -65,4 +65,16 @@ message PatchStatusRequest {
   ScheduleStatusGrpc status = 2;
 }
 
-message PatchStatusResponse {}
+message PatchStatusResponse {
+  oneof response {
+    SuccessPatchResponse success = 1;
+    ScheduleNotFoundResponse schedule_not_found = 2;
+    NotEnoughPlayersResponse not_enough_players = 3;
+  }
+}
+
+message SuccessPatchResponse {}
+
+message ScheduleNotFoundResponse {}
+
+message NotEnoughPlayersResponse {}

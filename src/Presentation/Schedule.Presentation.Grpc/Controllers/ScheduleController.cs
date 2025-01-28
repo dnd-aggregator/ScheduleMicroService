@@ -83,9 +83,21 @@ public class ScheduleController : ScheduleService.ScheduleServiceBase
         PatchStatusRequest request,
         ServerCallContext context)
     {
-        await _scheduleService.PatchStatusAsync(request.Id, MapStatusToGrpc(request.Status), context.CancellationToken);
+        PatchScheduleStatusResponse response = await _scheduleService.PatchStatusAsync(
+            request.Id,
+            MapStatusToGrpc(request.Status),
+            context.CancellationToken);
 
-        return new PatchStatusResponse();
+        return response switch
+        {
+            PatchScheduleStatusResponse.SuccessResponse => new PatchStatusResponse()
+                { Success = new SuccessPatchResponse() },
+            PatchScheduleStatusResponse.NotEnoughPlayersResponse => new PatchStatusResponse()
+                { NotEnoughPlayers = new NotEnoughPlayersResponse() },
+            PatchScheduleStatusResponse.ScheduleNotFoundResponse => new PatchStatusResponse()
+                { ScheduleNotFound = new ScheduleNotFoundResponse() },
+            _ => throw new ArgumentException("Unknown status"),
+        };
     }
 
     private static RepeatedField<ScheduleGrpc> ToGrpcResponse(List<ScheduleModel> schedules)
