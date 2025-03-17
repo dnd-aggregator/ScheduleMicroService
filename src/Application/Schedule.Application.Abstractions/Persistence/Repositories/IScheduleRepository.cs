@@ -6,6 +6,8 @@ namespace Schedule.Application.Abstractions.Persistence.Repositories;
 
 public interface IScheduleRepository
 {
+    Task<ScheduleModel> GetById(long id, CancellationToken cancellationToken);
+
     IAsyncEnumerable<ScheduleModel> QueryAsync(ScheduleQuery query, CancellationToken cancellationToken);
 
     Task<long> AddAsync(ScheduleDbo schedule, CancellationToken cancellationToken);

@@ -1,5 +1,4 @@
-using Itmo.Dev.Platform.Persistence.Abstractions.Commands;
-using Itmo.Dev.Platform.Persistence.Abstractions.Connections;
+using Npgsql;
 using Schedule.Application.Abstractions.Persistence.Dbo;
 using Schedule.Application.Abstractions.Persistence.Queries;
 using Schedule.Application.Abstractions.Persistence.Repositories;
@@ -11,11 +10,39 @@ namespace Schedule.Infrastructure.Persistence.Repositories;
 
 public class ScheduleRepository : IScheduleRepository
 {
-    private readonly IPersistenceConnectionProvider _connectionProvider;
+    private readonly NpgsqlDataSource _dataSource;
 
-    public ScheduleRepository(IPersistenceConnectionProvider connectionProvider)
+    public ScheduleRepository(NpgsqlDataSource dataSource)
     {
-        _connectionProvider = connectionProvider;
+        _dataSource = dataSource;
+    }
+
+    public async Task<ScheduleModel> GetById(long id, CancellationToken cancellationToken)
+    {
+        const string sql = """
+                            SELECT *
+                            FROM schedules
+                            WHERE id = @id;
+                           """;
+
+        await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.Add(new NpgsqlParameter("@id", id));
+
+        await using DbDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
+
+        if (await reader.ReadAsync(cancellationToken))
+        {
+            return new ScheduleModel(
+                Id: reader.GetInt64(0),
+                MasterId: reader.GetInt64(1),
+                Location: reader.GetString(2),
+                Date: reader.GetFieldValue<DateOnly>(3),
+                Status: reader.GetFieldValue<ScheduleStatus>(4));
+        }
+
+        throw new ApplicationException("Schedule not found");
     }
 
     public async IAsyncEnumerable<ScheduleModel> QueryAsync(
@@ -33,14 +60,14 @@ public class ScheduleRepository : IScheduleRepository
                            limit :page_size;
                            """;
 
-        await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
+        await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync(cancellationToken);
 
-        await using IPersistenceCommand command = connection.CreateCommand(sql)
-            .AddParameter("ids", query.ScheduleIds)
-            .AddParameter("location", query.Location)
-            .AddParameter("date", query.Date)
-            .AddParameter("cursor", query.Cursor)
-            .AddParameter("page_size", query.PageSize);
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.Add(new NpgsqlParameter("ids", query.ScheduleIds));
+        command.Parameters.Add(new NpgsqlParameter("location", query.Location ?? null));
+        command.Parameters.Add(new NpgsqlParameter("date", query.Date ?? null));
+        command.Parameters.Add(new NpgsqlParameter("cursor", query.Cursor));
+        command.Parameters.Add(new NpgsqlParameter("page_size", query.PageSize));
 
         await using DbDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
 
@@ -63,13 +90,13 @@ public class ScheduleRepository : IScheduleRepository
                            returning id;
                            """;
 
-        await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
+        await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync(cancellationToken);
 
-        await using IPersistenceCommand command = connection.CreateCommand(sql)
-            .AddParameter("@location", schedule.Location)
-            .AddParameter("@date", schedule.Date)
-            .AddParameter("@master_id", schedule.MasterId)
-            .AddParameter("@status", schedule.Status);
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.Add(new NpgsqlParameter("@master_id", schedule.MasterId));
+        command.Parameters.Add(new NpgsqlParameter("@location", schedule.Location));
+        command.Parameters.Add(new NpgsqlParameter("@date", schedule.Date));
+        command.Parameters.Add(new NpgsqlParameter("@status", schedule.Status));
 
         await using DbDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
 
@@ -85,11 +112,11 @@ public class ScheduleRepository : IScheduleRepository
                             where id = @id;
                            """;
 
-        await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
+        await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync(cancellationToken);
 
-        await using IPersistenceCommand command = connection.CreateCommand(sql)
-            .AddParameter("@id", id)
-            .AddParameter("@status", status);
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.Add(new NpgsqlParameter("@id", id));
+        command.Parameters.Add(new NpgsqlParameter("@status", status));
 
         await command.ExecuteNonQueryAsync(cancellationToken);
     }

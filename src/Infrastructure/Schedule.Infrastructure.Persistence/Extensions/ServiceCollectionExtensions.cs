@@ -1,7 +1,6 @@
 using Itmo.Dev.Platform.Persistence.Abstractions.Extensions;
 using Itmo.Dev.Platform.Persistence.Postgres.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using Schedule.Application.Abstractions.Persistence;
 using Schedule.Application.Abstractions.Persistence.Repositories;
 using Schedule.Infrastructure.Persistence.Plugins;
 using Schedule.Infrastructure.Persistence.Repositories;
@@ -18,11 +17,8 @@ public static class ServiceCollectionExtensions
                 .WithMigrationsFrom(typeof(IAssemblyMarker).Assembly)
                 .WithDataSourcePlugin<MappingPlugin>()));
 
-        // TODO: add repositories
         collection.AddScoped<IScheduleRepository, ScheduleRepository>();
         collection.AddScoped<IPlayerRepository, PlayerRepository>();
-
-        collection.AddScoped<IPersistenceContext, PersistenceContext>();
 
         return collection;
     }

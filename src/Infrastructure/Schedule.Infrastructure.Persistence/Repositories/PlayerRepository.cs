@@ -1,5 +1,4 @@
-using Itmo.Dev.Platform.Persistence.Abstractions.Commands;
-using Itmo.Dev.Platform.Persistence.Abstractions.Connections;
+using Npgsql;
 using Schedule.Application.Abstractions.Persistence.Dbo;
 using Schedule.Application.Abstractions.Persistence.Repositories;
 using Schedule.Application.Models;
@@ -10,11 +9,11 @@ namespace Schedule.Infrastructure.Persistence.Repositories;
 
 public class PlayerRepository : IPlayerRepository
 {
-    private readonly IPersistenceConnectionProvider _connectionProvider;
+    private readonly NpgsqlDataSource _dataSource;
 
-    public PlayerRepository(IPersistenceConnectionProvider connectionProvider)
+    public PlayerRepository(NpgsqlDataSource dataSource)
     {
-        _connectionProvider = connectionProvider;
+        _dataSource = dataSource;
     }
 
     public async Task AddPlayer(PlayerDbo playerDbo, CancellationToken cancellationToken)
@@ -24,12 +23,12 @@ public class PlayerRepository : IPlayerRepository
                            VALUES (@scheduleId, @userId, @characterId)
                            """;
 
-        await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
+        await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync(cancellationToken);
 
-        await using IPersistenceCommand command = connection.CreateCommand(sql)
-            .AddParameter("@scheduleId", playerDbo.ScheduleId)
-            .AddParameter("@userId", playerDbo.UserId)
-            .AddParameter("@characterId", playerDbo.CharacterId);
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.Add(new NpgsqlParameter("@scheduleId", playerDbo.ScheduleId));
+        command.Parameters.Add(new NpgsqlParameter("@userId", playerDbo.UserId));
+        command.Parameters.Add(new NpgsqlParameter("@characterId", playerDbo.CharacterId));
 
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -44,10 +43,10 @@ public class PlayerRepository : IPlayerRepository
                            where schedule_id = @scheduleId;
                            """;
 
-        await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
+        await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync(cancellationToken);
 
-        await using IPersistenceCommand command = connection.CreateCommand(sql)
-            .AddParameter("scheduleId", scheduleId);
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.Add(new NpgsqlParameter("@scheduleId", scheduleId));
 
         await using DbDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
 
@@ -68,12 +67,12 @@ public class PlayerRepository : IPlayerRepository
                            where schedule_id = @scheduleId and user_id = @userId
                            """;
 
-        await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
+        await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync(cancellationToken);
 
-        await using IPersistenceCommand command = connection.CreateCommand(sql)
-            .AddParameter("@scheduleId", playerDbo.ScheduleId)
-            .AddParameter("@userId", playerDbo.UserId)
-            .AddParameter("@characterId", playerDbo.CharacterId);
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.Add(new NpgsqlParameter("@scheduleId", playerDbo.ScheduleId));
+        command.Parameters.Add(new NpgsqlParameter("@userId", playerDbo.UserId));
+        command.Parameters.Add(new NpgsqlParameter("@characterId", playerDbo.CharacterId));
 
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -86,11 +85,11 @@ public class PlayerRepository : IPlayerRepository
                            WHERE schedule_id = @scheduleId AND user_id = @userId
                            """;
 
-        await using IPersistenceConnection connection = await _connectionProvider.GetConnectionAsync(cancellationToken);
+        await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync(cancellationToken);
 
-        await using IPersistenceCommand command = connection.CreateCommand(sql)
-            .AddParameter("@scheduleId", scheduleId)
-            .AddParameter("@userId", userId);
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.Add(new NpgsqlParameter("@scheduleId", scheduleId));
+        command.Parameters.Add(new NpgsqlParameter("@userId", userId));
 
         await command.ExecuteNonQueryAsync(cancellationToken);
     }

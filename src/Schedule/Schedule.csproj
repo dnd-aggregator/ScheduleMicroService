@@ -5,7 +5,6 @@
         <ProjectReference Include="..\Infrastructure\Schedule.Infrastructure.Persistence\Schedule.Infrastructure.Persistence.csproj"/>
         <ProjectReference Include="..\Presentation\Schedule.Presentation.Grpc\Schedule.Presentation.Grpc.csproj"/>
         <ProjectReference Include="..\Presentation\Schedule.Presentation.Http\Schedule.Presentation.Http.csproj" />
-        <ProjectReference Include="..\Presentation\Schedule.Presentation.Kafka\Schedule.Presentation.Kafka.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
