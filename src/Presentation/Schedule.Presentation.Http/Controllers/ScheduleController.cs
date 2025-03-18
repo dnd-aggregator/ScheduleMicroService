@@ -30,14 +30,6 @@ public class ScheduleController : ControllerBase
         return await _scheduleService.GetByIdAsync(id, cancellationToken);
     }
 
-    [HttpGet]
-    public IAsyncEnumerable<ScheduleModel> GetSchedules(
-        [FromQuery] GetSchedulesRequest request,
-        CancellationToken cancellationToken)
-    {
-        return _scheduleService.GetSchedulesAsync(request, cancellationToken);
-    }
-
     [HttpPatch("{scheduleId:long}")]
     public async Task PatchStatus(long scheduleId, ScheduleStatus status, CancellationToken cancellationToken)
     {
