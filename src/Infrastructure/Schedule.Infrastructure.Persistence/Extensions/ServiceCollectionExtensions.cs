@@ -1,6 +1,6 @@
-using Itmo.Dev.Platform.Persistence.Abstractions.Extensions;
-using Itmo.Dev.Platform.Persistence.Postgres.Extensions;
+using FluentMigrator.Runner;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using Schedule.Application.Abstractions.Persistence.Repositories;
 using Schedule.Infrastructure.Persistence.Plugins;
 using Schedule.Infrastructure.Persistence.Repositories;
@@ -9,17 +9,28 @@ namespace Schedule.Infrastructure.Persistence.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddInfrastructurePersistence(this IServiceCollection collection)
+    public static IServiceCollection AddInfrastructurePersistence(this IServiceCollection services)
     {
-        collection.AddPlatformPersistence(persistence => persistence
-            .UsePostgres(postgres => postgres
-                .WithConnectionOptions(b => b.BindConfiguration("Infrastructure:Persistence:Postgres"))
-                .WithMigrationsFrom(typeof(IAssemblyMarker).Assembly)
-                .WithDataSourcePlugin<MappingPlugin>()));
+        var connectionString = "Host=localhost;Port=5433;Database=postgres;Username=postgres;Password=postgres;";
+    
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
 
-        collection.AddScoped<IScheduleRepository, ScheduleRepository>();
-        collection.AddScoped<IPlayerRepository, PlayerRepository>();
+        MappingPlugin.Configure(dataSourceBuilder);
+    
+        var dataSource = dataSourceBuilder.Build();
+        services.AddSingleton(dataSource);
+    
+        services
+            .AddFluentMigratorCore()
+            .ConfigureRunner(rb => rb
+                .AddPostgres()
+                .WithGlobalConnectionString(connectionString)
+                .ScanIn(typeof(ServiceCollectionExtensions).Assembly).For.Migrations())
+            .AddLogging(lb => lb.AddFluentMigratorConsole());
+    
+        services.AddScoped<IScheduleRepository, ScheduleRepository>();
+        services.AddScoped<IPlayerRepository, PlayerRepository>();
 
-        return collection;
+        return services;
     }
 }

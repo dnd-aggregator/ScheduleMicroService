@@ -1,40 +1,48 @@
 using FluentMigrator;
-using Itmo.Dev.Platform.Persistence.Postgres.Migrations;
 
 namespace Schedule.Infrastructure.Persistence.Migrations;
 
 [Migration(1731949849, "initial")]
-public class Initial : SqlMigration
+public class Initial : Migration
 {
-    protected override string GetUpSql(IServiceProvider serviceProvider) =>
-        """
-        create type schedule_status as enum
-        (
-            'draft',
-            'planned',
-            'started',
-            'finished'
-        );
+    public override void Up()
+    {
+        Execute.WithConnection((conn, _) =>
+        {
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "CREATE TYPE schedule_status AS ENUM ('draft', 'planned', 'started', 'finished');";
+            cmd.ExecuteNonQuery();
+        });
 
-        CREATE TABLE schedules (
-            id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-            master_id BIGINT NOT NULL,
-            location VARCHAR(255) NOT NULL,
-            date DATE NOT NULL,
-            status schedule_status NOT NULL
-        );
+        Execute.Sql("""
+                    CREATE TABLE schedules (
+                        id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+                        master_id BIGINT NOT NULL,
+                        location VARCHAR(255) NOT NULL,
+                        date DATE NOT NULL,
+                        status schedule_status NOT NULL
+                    );
 
-        CREATE TABLE players (
-            schedule_id BIGINT NOT NULL,
-            user_id BIGINT NOT NULL,
-            character_id BIGINT NOT NULL
-        )
-        """;
+                    CREATE TABLE players (
+                        schedule_id BIGINT NOT NULL,
+                        user_id BIGINT NOT NULL,
+                        character_id BIGINT NOT NULL
+                    );
+                    """);
+    }
 
-    protected override string GetDownSql(IServiceProvider serviceProvider) =>
-        """
-        drop table schedules;
-        drop table players;
-        drop type schedule_status;
-        """;
+    public override void Down()
+    {
+        Execute.Sql("""
+                    DROP TABLE schedules;
+                    DROP TABLE players;
+                    """);
+
+        Execute.WithConnection((conn, _) =>
+        {
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "DROP TYPE schedule_status;";
+            cmd.ExecuteNonQuery();
+        });
+    }
 }

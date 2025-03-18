@@ -1,16 +1,11 @@
-using Itmo.Dev.Platform.Persistence.Postgres.Plugins;
 using Npgsql;
 using Schedule.Application.Models;
 
 namespace Schedule.Infrastructure.Persistence.Plugins;
 
-/// <summary>
-///     Plugin for configuring NpgsqlDataSource's mappings
-///     ie: enums, composite types
-/// </summary>
-public class MappingPlugin : IPostgresDataSourcePlugin
+public static class MappingPlugin
 {
-    public void Configure(NpgsqlDataSourceBuilder dataSource)
+    public static void Configure(NpgsqlDataSourceBuilder dataSource)
     {
         dataSource.MapEnum<ScheduleStatus>("schedule_status");
     }

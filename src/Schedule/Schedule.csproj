@@ -8,7 +8,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Itmo.Dev.Platform.Observability" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
         <PackageReference Include="Swashbuckle.AspNetCore" />
     </ItemGroup>
